@@ -35,7 +35,7 @@ Read more below to understand what these steps are doing.
 
     git clone https://github.com/shacron/sledkit.git
     cd sledkit
-    git clone [sled]
+    git clone https://github.com/shacron/sled.git
     git clone https://github.com/shacron/carmel.git libc
     export JOBS=`getconf _NPROCESSORS_ONLN`
     make toolchain
@@ -58,7 +58,7 @@ This will download and build the LLVM cross-compiler and binutils. This will tak
 
 ### Clone sled
 
-    git clone ...
+    git clone https://github.com/shacron/sled.git
     export JOBS=`getconf _NPROCESSORS_ONLN`
     make -j $JOBS sled
 
