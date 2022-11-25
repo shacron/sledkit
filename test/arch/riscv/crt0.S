@@ -25,7 +25,7 @@ _start:
 .global platform_abort
 platform_abort:
     .cfi_startproc
-    li  a1, 1                   // exit error
+    mv  a1, a0                  // status in a1
     li  a0, 0x666               // monitor exit
     ecall
     .cfi_endproc
