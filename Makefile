@@ -71,6 +71,8 @@ LIBCDIR ?= libc
 TESTDIR := test
 JOBS ?= $(shell getconf _NPROCESSORS_ONLN)
 
+ALL_TARGETS := $(wildcard sled libc monitor runtime)
+
 all: tests
 
 .PHONY: sled
@@ -83,10 +85,14 @@ libc:
 
 .PHONY: runtime
 runtime:
-	@$(MAKE) -s -C runtime BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
+	@$(MAKE) -s -C $@ BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
+
+.PHONY: monitor
+monitor: runtime libc
+	@$(MAKE) -s -C $@ BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
 
 .PHONY: tests
-tests: sled libc runtime
+tests: $(ALL_TARGETS)
 	@$(MAKE) -s -C $(TESTDIR) BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
 
 #####################################################################
