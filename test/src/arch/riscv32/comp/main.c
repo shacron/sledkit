@@ -1,3 +1,4 @@
+#include <inttypes.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -6,10 +7,12 @@
 typedef int32_t sxlen_t;
 typedef uint32_t uxlen_t;
 #define MASK_XLEN(x) ((x) & 0xffffffff)
+#define PRIXLENx PRIx32
 #else
 typedef int64_t  sxlen_t;
 typedef uint64_t uxlen_t;
 #define MASK_XLEN(x) ((x) & 0xffffffffffffffff)
+#define PRIXLENx PRIx64
 #endif
 
 uint32_t total = 0;
@@ -22,16 +25,16 @@ uint32_t failed = 0;
     src = MASK_XLEN(val); \
     if (destreg == 0) { \
         __asm__ __volatile__(#inst " x0, %0, " #imm :: "r" (src)); \
-        printf(#inst " x0,  src=" #val ", imm=" #imm " = %x\n", dst); \
+        printf(#inst " x0,  src=" #val ", imm=" #imm " = %" PRIXLENx "\n", dst); \
     } else if (reg == 0) { \
         __asm__ __volatile__(#inst " %0, x0, " #imm : "=r" (dst)); \
-        printf(#inst " dst, x0,  imm=" #imm " = %x\n", dst); \
+        printf(#inst " dst, x0,  imm=" #imm " = %" PRIXLENx "\n", dst); \
     } else { \
         __asm__ __volatile__(#inst " %0, %1, " #imm : "=r" (dst) : "r" (src)); \
-        printf(#inst " dst, src=" #val ", imm=" #imm " = %x\n", dst); \
+        printf(#inst " dst, src=" #val ", imm=" #imm " = %" PRIXLENx "\n", dst); \
     } \
     if (dst != correctval) { \
-        printf("     FAILED: expected %x, got %x\n", correctval, dst); \
+        printf("     FAILED: expected %x, got %" PRIXLENx "\n", correctval, dst); \
         failed++; \
     } \
     total++;
@@ -48,19 +51,19 @@ void test_imm(void) {
     r2 = MASK_XLEN(val2); \
    if (destreg == 0) { \
         __asm__ __volatile__(#inst " x0, %[r1], %[r2]" :: [r1] "r" (r1), [r2] "r" (r2)); \
-        printf(#inst " x0 , r1=" #val1 ", r2=" #val2 " = %x\n", dst); \
+        printf(#inst " x0 , r1=" #val1 ", r2=" #val2 " = %" PRIXLENx "\n", dst); \
     } else if (r1 == 0) { \
         __asm__ __volatile__(#inst " %[dst], x0, %[r2]" : [dst] "=r" (dst) : [r2] "r" (r2)); \
-        printf(#inst " dst, x0, r2=" #val2 " = %x\n", dst); \
+        printf(#inst " dst, x0, r2=" #val2 " = %" PRIXLENx "\n", dst); \
     } else if (r2 == 0) { \
         __asm__ __volatile__(#inst " %[dst], %[r1], x0" : [dst] "=r" (dst) : [r1] "r" (r1)); \
-        printf(#inst " dst, r1=" #val1 ", x0 = %x\n", dst); \
+        printf(#inst " dst, r1=" #val1 ", x0 = %" PRIXLENx "\n", dst); \
     } else { \
         __asm__ __volatile__(#inst " %[dst], %[r1], %[r2]" : [dst] "=r" (dst) : [r1] "r" (r1), [r2] "r" (r2)); \
-        printf(#inst " dst, r1=" #val1 ", r2=" #val2 " = %x\n", dst); \
+        printf(#inst " dst, r1=" #val1 ", r2=" #val2 " = %" PRIXLENx "\n", dst); \
     } \
     if (dst != correctval) { \
-        printf("     FAILED: expected %x, got %x\n", correctval, dst); \
+        printf("     FAILED: expected %x, got %" PRIXLENx "\n", correctval, dst); \
         failed++; \
     } \
 
