@@ -40,7 +40,6 @@ $(LLVM_ARCHIVE_PATH):
 # extract
 $(LLVM_SOURCE_DIR): $(LLVM_ARCHIVE_PATH)
 	@mkdir -p $(dir $@)
-	tar -xzf $(LLVM_ARCHIVE_PATH) -C $(dir $@)
 	@echo "[tar]" $^
 	@tar -xf $(LLVM_ARCHIVE_PATH) -C $(dir $@)
 
