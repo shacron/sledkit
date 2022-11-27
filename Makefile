@@ -106,7 +106,7 @@ toolchain:
 
 .PHONY: clean
 clean:
-	@rm -rf $(BLD_BASEDIR) $(SDKDIR)/target
+	@rm -rf $(BLD_BASEDIR) $(SDKDIR)/target $(SDKDIR)/host
 
 # warning: this will require rebuilding the toolchain
 .PHONY: reallyclean
