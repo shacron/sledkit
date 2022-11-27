@@ -40,7 +40,7 @@ Read more below to understand what these steps are doing.
     export JOBS=`getconf _NPROCESSORS_ONLN`
     make toolchain
     make -j $JOBS
-    ./sdk/host/Darwin/bin/sled sdk/target/rv32im/bin/fib
+    ./sdk/host/<os>/bin/sled sdk/target/rv32im/bin/fib
 
 
 ## Detailed Setup
