@@ -9,7 +9,7 @@ LIBTARGETS := driver
 
 riscv32_TESTS := rvcomp
 
-ALL_TESTS := $(COMMON_TESTS) $(riscv32_TESTS)
+ALL_TESTS := $(COMMON_TESTS) $($(BLD_TARGET_ARCH_FAMILY)_TESTS)
 
 
 ##############################################################################

@@ -51,14 +51,14 @@ export BLD_TOOLCHAIN_BINDIR
 ifeq ($(BLD_TARGET_TRIPLE),)
 
 ifneq ($(findstring rv32,$(BLD_TARGET_ARCH)),)
-TARGET_TRIPLE_ARCH := riscv32
+export BLD_TARGET_ARCH_FAMILY := riscv32
 endif
 
 ifneq ($(findstring rv64,$(BLD_TARGET_ARCH)),)
-TARGET_TRIPLE_ARCH := riscv64
+export BLD_TARGET_ARCH_FAMILY := riscv64
 endif
 
-BLD_TARGET_TRIPLE := $(TARGET_TRIPLE_ARCH)-linux-none
+BLD_TARGET_TRIPLE := $(BLD_TARGET_ARCH_FAMILY)-linux-none
 BLD_TARGET_CFLAGS := -target $(BLD_TARGET_TRIPLE) -march=$(BLD_TARGET_ARCH)
 
 endif # BLD_TARGET_TRIPLE
