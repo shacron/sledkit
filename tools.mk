@@ -21,8 +21,10 @@ else
 LLVM_LD := $(BLD_HOST_LD)
 endif
 
+# AArch64;AMDGPU;ARM;AVR;BPF;Hexagon;Lanai;Mips;MSP430;NVPTX;PowerPC;RISCV;Sparc;SystemZ;VE;WebAssembly;X86;XCore
+
 BUILDOPTS := \
-	-DLLVM_TARGETS_TO_BUILD=RISCV \
+	-DLLVM_TARGETS_TO_BUILD="AArch64;ARM;RISCV" \
 	-DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld" \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_C_COMPILER=$(BLD_HOST_CC) \
