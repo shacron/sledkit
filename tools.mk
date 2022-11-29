@@ -22,6 +22,7 @@ LLVM_LD := $(BLD_HOST_LD)
 endif
 
 BUILDOPTS := \
+	-DLLVM_TARGETS_TO_BUILD=RISCV \
 	-DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld" \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_C_COMPILER=$(BLD_HOST_CC) \
