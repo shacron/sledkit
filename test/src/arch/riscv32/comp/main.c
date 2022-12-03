@@ -4,15 +4,21 @@
 #include <stdint.h>
 
 #if __riscv_xlen == 32
+#define USING_RV32 1
 typedef int32_t sxlen_t;
 typedef uint32_t uxlen_t;
 #define MASK_XLEN(x) ((x) & 0xffffffff)
 #define PRIXLENx PRIx32
+#define UPPER(x) (((uint64_t)(x)) >> 32)
+#define LOWER(x) (((uint64_t)(x)) & 0xffffffff)
 #else
+#define USING_RV64 1
 typedef int64_t  sxlen_t;
 typedef uint64_t uxlen_t;
 #define MASK_XLEN(x) ((x) & 0xffffffffffffffff)
 #define PRIXLENx PRIx64
+#define UPPER(x) (x)
+#define LOWER(x) (x)
 #endif
 
 uint32_t total = 0;
@@ -33,8 +39,8 @@ uint32_t failed = 0;
         __asm__ __volatile__(#inst " %0, %1, " #imm : "=r" (dst) : "r" (src)); \
         printf(#inst " dst, src=" #val ", imm=" #imm " = %" PRIXLENx "\n", dst); \
     } \
-    if (dst != correctval) { \
-        printf("     FAILED: expected %x, got %" PRIXLENx "\n", correctval, dst); \
+    if (dst != (uxlen_t)correctval) { \
+        printf("     FAILED: expected %" PRIXLENx ", got %" PRIXLENx "\n", (uxlen_t)correctval, dst); \
         failed++; \
     } \
     total++;
