@@ -103,9 +103,9 @@ Additional parameters may be required, such as CFLAGS, depending on the target.
 
 ## License
 
-The code is licensed under the MIT License. The short version that you can use this code for any purpose, but should retain the copyright notice in the source.
+sledKit is Copyright (c) 2022, Shac Ron and The Sled Project
 
-All code is copyright 2022, Shac Ron unless otherwise specified.
+Unless otherwise stated, all code is licensed under the MIT License. The short version is that you can use this code for any purpose, but should retain the copyright notice in the source.
 
 RISCV conformance test code is copyright (c) 2019, Imperas Software Ltd. Copyright notice is contained in the relevant source files.
 
