@@ -75,6 +75,11 @@ ALL_TARGETS := $(wildcard sled libc monitor runtime)
 
 all: tests
 
+.PHONY: headers
+headers:
+	@$(MAKE) -s -C $(SLEDDIR) install_headers BLD_HOST_OBJDIR=$(HOST_OBJDIR)/$@
+	@$(MAKE) -s -C $(LIBCDIR) install_headers BLD_HOST_OBJDIR=$(HOST_OBJDIR)/$@
+
 .PHONY: sled
 sled:
 	@$(MAKE) -s -C $(SLEDDIR) install BLD_HOST_OBJDIR=$(HOST_OBJDIR)/$@
@@ -84,16 +89,17 @@ libc:
 	@$(MAKE) -s -C $(LIBCDIR) install BLD_BASEDIR=$(TARGET_OBJDIR)/$@
 
 .PHONY: runtime
-runtime:
+runtime: headers
 	@$(MAKE) -s -C $@ BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
 
 .PHONY: monitor
-monitor: runtime libc
+monitor: headers runtime libc
 	@$(MAKE) -s -C $@ BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
 
 .PHONY: tests
-tests: $(ALL_TARGETS)
+tests: headers $(ALL_TARGETS)
 	@$(MAKE) -s -C $(TESTDIR) BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
+
 
 #####################################################################
 # toolchain build - only needed at bootstrap
