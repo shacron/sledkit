@@ -3,7 +3,7 @@
 #include <driver/base.h>
 #include <driver/reg.h>
 
-#include <sled/device/uart.h>
+#include <device/sled/uart.h>
 
 int platform_getchar(void) {
     // todo: wait for data
