@@ -107,5 +107,7 @@ sledKit is Copyright (c) 2022, Shac Ron and The Sled Project
 
 Unless otherwise stated, all code is licensed under the MIT License. The short version is that you can use this code for any purpose, but should retain the copyright notice in the source.
 
+Compiler-RT Runtime builtins in `runtime/builtins/` are copyright the LLVM Project and available under the Apache-2.0 WITH LLVM-exception license. The code originates from LLVM: https://llvm.org
+
 RISCV conformance test code is copyright (c) 2019, Imperas Software Ltd. Copyright notice is contained in the relevant source files.
 

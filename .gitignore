@@ -3,6 +3,5 @@ archive
 build
 libc
 monitor
-runtime/builtins
 sdk
 sled
