@@ -76,13 +76,11 @@ The runtime is made of three components
 
 All projects below will be compiled for the target architecture. See "Setting The Target Architecture" for choosing this.
 
-Code for the compiler runtime was installed from the LLVM project (`compiler-rt`) when the toolchain is built. If you skipped this step you will need to provide your own runtime.
+Code for the compiler runtime from the LLVM project (`compiler-rt`) is installed in `runtime/builtin`. This code is updated when the toolchain is built. Code for the C runtime is in `runtime/arch/<arch>/crt0.S`.
 
     make -j $JOBS runtime
 
-This will install the runtime in `sdk/target/<target>/lib/runtime.a`
-
-The C runtime is built and installed as part of the test software. See "tests" below. TODO: move crt0 out.
+This will install the runtime in `sdk/target/<target>/lib/runtime.a` and crt0 `sdk/target/<target>/lib/crt0.o`
 
 Libc is optional, but useful. Having printf() connected to the UART device is convenient. You may use any libc implementation that supports standalone targets. This project has been tested with `carmel` embedded libc, which should be the easiest to use.
 
@@ -99,7 +97,7 @@ Example:
 
     make -j $JOBS BLD_TARGET_ARCH=rv64imc
 
-Additional parameters may be required, such as CFLAGS, depending on the target.
+Additional parameters, such as CFLAGS, may be required depending on the target.
 
 ## License
 
