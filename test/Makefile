@@ -76,19 +76,6 @@ $(BLD_TARGET_OBJDIR)/%.c.o: %.c
 
 
 ##############################################################################
-# crt0 build rules
-##############################################################################
-
-$(BLD_TARGET_LIBDIR)/crt0.o: $(BLD_TARGET_OBJDIR)/crt0.o
-	@cp $< $@
-
-$(BLD_TARGET_OBJDIR)/crt0.o: arch/$(BLD_TARGET_ISA)/crt0.S
-	@mkdir -p $(dir $@)
-	@echo " [as]" $(notdir $@)
-	@$(BLD_TARGET_AS) $(CFLAGS) -c -o $@ $<
-
-
-##############################################################################
 # library build rules
 ##############################################################################
 
@@ -111,14 +98,19 @@ $(foreach lib,$(LIBTARGETS),$(eval $(call build_lib,$(lib))))
 # test build rules
 ##############################################################################
 
+TEST_LIBS := \
+	$(BLD_TARGET_LIBDIR)/crt0.o \
+	$(BLD_TARGET_LIBDIR)/runtime.a \
+	$(BLD_TARGET_LIBDIR)/libc.a
+
 define build_test
 
 $(1): $(BLD_TARGET_BINDIR)/$(1)
 
-$(BLD_TARGET_BINDIR)/$(1): $($(1)_OBJS) $(BLD_TARGET_LIBDIR)/crt0.o $(BLD_TARGET_LIBDIR)/libdriver.a
+$(BLD_TARGET_BINDIR)/$(1): $($(1)_OBJS) $(BLD_TARGET_LIBDIR)/libdriver.a
 	@mkdir -p $$(dir $$@)
 	@echo " [ld]" $$(notdir $$@)
-	@$(BLD_TARGET_LD) --image-base=$(BLD_TARGET_IMAGE_BASE) -o $$@ $$^ $(BLD_TARGET_LIBDIR)/runtime.a $(BLD_TARGET_LIBDIR)/libc.a
+	@$(BLD_TARGET_LD) --image-base=$(BLD_TARGET_IMAGE_BASE) -o $$@ $$^ $(TEST_LIBS)
 
 endef
 
