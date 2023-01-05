@@ -117,5 +117,5 @@ clean:
 # warning: this will require rebuilding the toolchain
 .PHONY: reallyclean
 reallyclean:
-	@rm -rf $(BLD_BASEDIR) $(SDKDIR) $(BLD_RUNTIME_ROOT)/builtins
+	@rm -rf $(BLD_BASEDIR) $(SDKDIR)
 
