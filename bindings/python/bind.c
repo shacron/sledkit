@@ -6,15 +6,18 @@
 #include <sled/error.h>
 #include <sled/machine.h>
 
+static void pysled_machine_destroy(PyObject *o) {
+    machine_destroy(PyCapsule_GetPointer(o, "machine_t"));
+}
+
 static PyObject * pysled_machine_create(PyObject *self, PyObject *args) {
     int err = 0;
     machine_t *m = NULL;
-
     if ((err = machine_create(&m))) {
-        fprintf(stderr, "machine_init failed: %s\n", st_err(err));
+        PyErr_SetString(PyExc_TypeError, st_err(err));
+        return NULL;
     }
-
-    return PyLong_FromLong(err);
+    return PyCapsule_New(m, "machine_t", pysled_machine_destroy);
 }
 
 static PyMethodDef pysled_methods[] = {
