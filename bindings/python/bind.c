@@ -91,21 +91,6 @@ static PyTypeObject MachineType = {
     .tp_methods = psled_machine_methods,
 };
 
-// static PyObject * psled_machine_create(PyObject *self, PyObject *args) {
-//     // int err = 0;
-//     // machine_t *m = NULL;
-//     // if ((err = machine_create(&m))) {
-//     //     PyErr_SetString(PyExc_TypeError, st_err(err));
-//     //     return NULL;
-//     // }
-//     // return PyCapsule_New(m, "machine_t", psled_machine_destroy);
-// }
-
-// static PyMethodDef psled_methods[] = {
-//     { "machine_create",  psled_machine_create, METH_VARARGS, "Create a machine." },
-//     { NULL, NULL, 0, NULL }        // end
-// };
-
 static struct PyModuleDef psledmodule = {
     PyModuleDef_HEAD_INIT,
     .m_name = "sled", // name of module
