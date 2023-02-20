@@ -113,7 +113,7 @@ define build_py_bindings
 	@$(MAKE) -s BLD_HOST_UNIVERSAL=1 BLD_HOST_USE_SANITIZERS=0
 	@python3 bindings/python/setup.py build_ext -q -I $(BLD_HOST_INCDIR) -O $(BLD_HOST_LIBDIR)/libsled.a \
 		--build-lib=$(BLD_HOST_LIBDIR) --build-temp=$(HOST_OBJDIR) -j $(JOBS)
-	@echo "set PYTHONPATH=$(BLD_HOST_LIBDIR) to use this extension, and 'import pysled'"
+	@echo "set PYTHONPATH=$(BLD_HOST_LIBDIR) to use this extension, and 'import psled'"
 
 endef
 

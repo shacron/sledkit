@@ -105,17 +105,20 @@ A Python language extension can be built using the following command:
 
     make -j $JOBS python_bindings
 
-This will build a shared object `sdk/host/<os-arch>/lib/pysled.cpython-<version>.so` loadable by your system's Python interpreter. To load it you must add this path to your `PYTHONPATH`. For example:
+This will build a shared object `sdk/host/<os-arch>/lib/psled.cpython-<version>.so` loadable by your system's Python interpreter. To load it you must add this path to your `PYTHONPATH`. For example:
 
     export PYTHONPATH=/path/to/sdk/host/<os-arch>/lib
 
 Then launch `python3` or include in your scripts
 
-    >>> import pysled
+    >>> import psled
+    >>> m = psled.machine()
+    >>> m.add_mem(0x10000, (5 * 1024 * 1024))
+    >>> m.add_dev(128, 0x5000000, "uart0")
 
 the `dir()` command will show available functions
 
-    >>> dir(pysled)
+    >>> dir(psled)
 
 ### Rebuilding Python Bindings
 
@@ -129,10 +132,10 @@ You may encounter the following errors with Python bindings:
 
 When importing the extension, you may see
 
-    >>> import pysled
+    >>> import psled
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
-    ImportError: dlopen(/path/to/sdk/host/Darwin/lib/pysled.cpython-39-darwin.so, 0x0002): symbol not found in flat namespace '___asan_option_detect_stack_use_after_return'
+    ImportError: dlopen(/path/to/sdk/host/Darwin/lib/psled.cpython-39-darwin.so, 0x0002): symbol not found in flat namespace '___asan_option_detect_stack_use_after_return'
 
 If you encounter this, you have linked the extension against a sled build with address sanitizer enabled. `make clean` and rebuild with `make python_bindings`.
 
