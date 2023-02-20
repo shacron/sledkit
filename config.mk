@@ -33,8 +33,10 @@ BLD_HOST_CXX ?= clang++
 BLD_HOST_AS  ?= clang
 ifeq ($(BLD_HOST_OS),Darwin)
 BLD_HOST_LD  ?= ld
+BLD_HOST_UNIVERSAL=1
 else
 BLD_HOST_LD  ?= ld.lld
+BLD_HOST_UNIVERSAL=0
 endif
 BLD_HOST_AR  ?= ar
 
