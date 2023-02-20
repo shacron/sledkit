@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
+#include <sled/elf.h>
 #include <sled/error.h>
 #include <sled/machine.h>
 
@@ -79,6 +80,33 @@ static PyObject *psled_machine_add_core(MachineObject *self, PyObject *args) {
     return PyLong_FromUnsignedLong(params.id);
 }
 
+static PyObject *psled_machine_load_core(MachineObject *self, PyObject *args) {
+    uint32_t id;
+    char *filename;
+
+    if (!PyArg_ParseTuple(args, "Is", &id, &filename)) {
+        PyErr_SetString(PyExc_TypeError, "core_id and filename arguments required");
+        return NULL;
+    }
+
+    int err;
+    elf_object_t *eo = NULL;
+    if ((err = elf_open(filename, &eo))) {
+        PyErr_SetString(PyExc_TypeError, "failed to open file");
+        return NULL;
+    }
+
+    err = machine_load_core(self->m, id, eo, true);
+    elf_close(eo);
+    if (err) {
+        PyErr_SetString(PyExc_TypeError, st_err(err));
+        return NULL;
+    }
+
+    Py_RETURN_NONE;
+}
+
+
 static PyMethodDef psled_machine_methods[] = {
     {
         "add_mem",
@@ -98,7 +126,13 @@ static PyMethodDef psled_machine_methods[] = {
         METH_VARARGS,
         "Add core to machine"
     },
-    { NULL }  /* Sentinel */
+    {
+        "load_core",
+        (PyCFunction)psled_machine_load_core,
+        METH_VARARGS,
+        "Load a file into core memory"
+    },
+    { NULL }  // Sentinel
 };
 
 static PyTypeObject MachineType = {
