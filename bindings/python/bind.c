@@ -45,12 +45,36 @@ static PyObject *psled_machine_add_mem(MachineObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+static PyObject *psled_machine_add_device(MachineObject *self, PyObject *args) {
+    uint32_t type;
+    uint64_t base;
+    char *name;
+
+    if (!PyArg_ParseTuple(args, "ILs", &type, &base, &name)) {
+        PyErr_SetString(PyExc_TypeError, "type, base, and name arguments required");
+        return NULL;
+    }
+
+    int err = machine_add_device(self->m, type, base, name);
+    if (err) {
+        PyErr_SetString(PyExc_TypeError, st_err(err));
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef psled_machine_methods[] = {
     {
         "add_mem",
         (PyCFunction)psled_machine_add_mem,
         METH_VARARGS,
         "Add memory to machine"
+    },
+    {
+        "add_dev",
+        (PyCFunction)psled_machine_add_device,
+        METH_VARARGS,
+        "Add device to machine"
     },
     { NULL }  /* Sentinel */
 };
