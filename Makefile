@@ -48,6 +48,7 @@ export BLD_TOOLCHAINDIR
 export BLD_TOOLCHAIN_HOST_ROOT
 export BLD_TOOLCHAIN_BINDIR
 export BLD_HOST_UNIVERSAL
+export BLD_HOST_USE_SANITIZERS
 
 ifeq ($(BLD_TARGET_TRIPLE),)
 
@@ -101,6 +102,28 @@ monitor: headers runtime libc
 tests: headers $(ALL_TARGETS)
 	@$(MAKE) -s -C $(TESTDIR) BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
 
+#####################################################################
+# python bindings build
+# python bindings require a special build that disables sanitizers
+#####################################################################
+
+define build_py_bindings
+	@echo "If binding build failed, you may need to clean old build results."
+	@echo "Python bindings require disabling sanitizers that are normally enabled."
+	@$(MAKE) -s BLD_HOST_UNIVERSAL=1 BLD_HOST_USE_SANITIZERS=0
+	@python3 bindings/python/setup.py build_ext -I $(BLD_HOST_INCDIR) -O $(BLD_HOST_LIBDIR)/libsled.a \
+		--build-lib=$(BLD_HOST_LIBDIR) --build-temp=$(HOST_OBJDIR) -j $(JOBS)
+	@echo "set PYTHONPATH=$(BLD_HOST_LIBDIR) to use this extension, and 'import pysled'"
+
+endef
+
+.PHONY: py
+py:
+	$(call build_py_bindings)
+
+.PHONY: python_bindings
+python_bindings: clean
+	$(call build_py_bindings)
 
 #####################################################################
 # toolchain build - only needed at bootstrap

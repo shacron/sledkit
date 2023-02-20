@@ -33,12 +33,16 @@ BLD_HOST_CXX ?= clang++
 BLD_HOST_AS  ?= clang
 ifeq ($(BLD_HOST_OS),Darwin)
 BLD_HOST_LD  ?= ld
-BLD_HOST_UNIVERSAL=1
+# build multi-architecture host binaries
+BLD_HOST_UNIVERSAL ?= 0
 else
 BLD_HOST_LD  ?= ld.lld
-BLD_HOST_UNIVERSAL=0
+BLD_HOST_UNIVERSAL := 0
 endif
 BLD_HOST_AR  ?= ar
+
+# use sanitizer tools to catch runtime errors
+BLD_HOST_USE_SANITIZERS ?= 1
 
 # directory in which the toolchain is installed
 BLD_TOOLCHAINDIR        ?= $(SDKDIR)/tools
