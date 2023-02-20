@@ -30,6 +30,31 @@ static void psled_machine_dealloc(MachineObject *self) {
     Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
+static PyObject *psled_machine_add_mem(MachineObject *self, PyObject *args) {
+    uint64_t base, size;
+
+    if (!PyArg_ParseTuple(args, "LL", &base, &size)) {
+        PyErr_SetString(PyExc_TypeError, "base and size arguments required");
+        return NULL;
+    }
+    int err = machine_add_mem(self->m, base, size);
+    if (err) {
+        PyErr_SetString(PyExc_TypeError, st_err(err));
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef psled_machine_methods[] = {
+    {
+        "add_mem",
+        (PyCFunction)psled_machine_add_mem,
+        METH_VARARGS,
+        "Add memory to machine"
+    },
+    { NULL }  /* Sentinel */
+};
+
 static PyTypeObject MachineType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "psled.machine",
@@ -39,6 +64,7 @@ static PyTypeObject MachineType = {
     .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
     .tp_new = psled_machine_new,
     .tp_dealloc = (destructor)psled_machine_dealloc,
+    .tp_methods = psled_machine_methods,
 };
 
 // static PyObject * psled_machine_create(PyObject *self, PyObject *args) {
@@ -61,7 +87,6 @@ static struct PyModuleDef psledmodule = {
     .m_name = "sled", // name of module
     .m_doc = NULL,   // module documentation, may be NULL
     .m_size = -1,     // size of per-interpreter state of the module, or -1 if the module keeps state in global variables.
-    // .m_methods = psled_methods,
 };
 
 PyMODINIT_FUNC PyInit_psled(void) {
