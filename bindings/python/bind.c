@@ -63,6 +63,22 @@ static PyObject *psled_machine_add_device(MachineObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+static PyObject *psled_machine_add_core(MachineObject *self, PyObject *args) {
+    core_params_t params = {};
+    if (!PyArg_ParseTuple(args, "bbI", &params.arch, &params.subarch, &params.options, &params.arch_options)) {
+        PyErr_SetString(PyExc_TypeError, "arch, subarch, options, and arch_options arguments required");
+        return NULL;
+    }
+
+    int err = machine_add_core(self->m, &params);
+    if (err) {
+        PyErr_SetString(PyExc_TypeError, st_err(err));
+        return NULL;
+    }
+
+    return PyLong_FromUnsignedLong(params.id);
+}
+
 static PyMethodDef psled_machine_methods[] = {
     {
         "add_mem",
@@ -75,6 +91,12 @@ static PyMethodDef psled_machine_methods[] = {
         (PyCFunction)psled_machine_add_device,
         METH_VARARGS,
         "Add device to machine"
+    },
+    {
+        "add_core",
+        (PyCFunction)psled_machine_add_core,
+        METH_VARARGS,
+        "Add core to machine"
     },
     { NULL }  /* Sentinel */
 };
@@ -93,9 +115,9 @@ static PyTypeObject MachineType = {
 
 static struct PyModuleDef psledmodule = {
     PyModuleDef_HEAD_INIT,
-    .m_name = "sled", // name of module
-    .m_doc = NULL,   // module documentation, may be NULL
-    .m_size = -1,     // size of per-interpreter state of the module, or -1 if the module keeps state in global variables.
+    .m_name = "psled", // name of module
+    .m_doc = NULL,     // module documentation, may be NULL
+    .m_size = -1,      // size of per-interpreter state of the module, or -1 if the module keeps state in global variables.
 };
 
 PyMODINIT_FUNC PyInit_psled(void) {
