@@ -111,7 +111,7 @@ This will build a shared object `sdk/host/<os-arch>/lib/psled.cpython-<version>.
 
 Then launch `python3` or import it into your scripts in your scripts
 
-### Example 1
+### Example
 
     import psled
 
@@ -134,7 +134,7 @@ the `dir()` command will show available functions
 
 ### Rebuilding Python Bindings
 
-If you are making changes to sled or other componenets, you may need to rebuild bindings frequently. Unfortunately, Python bindings require two build options that are different from the standard options. One, they require disabling sanitizers linked into sled, unless your Python was built with the sanitizers enabled (unlikely). Two, on macOS they expect a universal (multi-architecture) build. This is why Python bindings are not built by default.
+If you are making changes to sled or other components, you may need to rebuild bindings frequently. Unfortunately, Python bindings require two build options that differ from the standard options. One, they require disabling sanitizers linked into sled, unless your Python was built with the sanitizers enabled (unlikely). Two, on macOS they expect a universal (multi-architecture) build. This is why Python bindings are not built by default.
 
 The `python_bindings` target does a clean build to guarantee that the above requirements are met. There is a second target, `py`, which builds the sdk and its dependencies without cleaning. If you frequently need to rebuild the Python bindings, you can use this after your first invocation of `make python_bindings`.
 

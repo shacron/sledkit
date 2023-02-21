@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT License
+// Copyright (c) 2022-2023 Shac Ron and The Sled Project
+
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
