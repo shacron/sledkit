@@ -39,6 +39,11 @@ static PyObject *psled_machine_new(PyTypeObject *type, PyObject *args, PyObject 
 }
 
 static void psled_machine_dealloc(MachineObject *self) {
+    for (int i = 0; i < MAX_CORES; i++) {
+        CoreObject *c = self->core[i];
+        if (c == NULL) continue;
+        Py_DECREF(c);
+    }
     machine_destroy(self->m);
     Py_TYPE(self)->tp_free((PyObject *)self);
 }
