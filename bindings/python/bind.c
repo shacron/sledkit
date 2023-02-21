@@ -23,6 +23,21 @@ typedef struct {
 
 CoreObject * psled_core_new_internal(core_t *c, uint32_t id);
 
+static PyObject *psled_core_step(CoreObject *self, PyObject *args) {
+    uint32_t steps = 1;
+
+    if (!PyArg_ParseTuple(args, "L", &steps)) {
+        PyErr_SetString(PyExc_TypeError, "invalid step count");
+        return NULL;
+    }
+    int err = core_step(self->c, steps);
+    if (err) {
+        PyErr_SetString(PyExc_TypeError, st_err(err));
+        return NULL;
+    }
+    Py_RETURN_NONE;
+}
+
 static PyObject *psled_machine_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     MachineObject *self;
     self = (MachineObject *)type->tp_alloc(type, 0);
@@ -214,6 +229,16 @@ static PyTypeObject MachineType = {
     .tp_methods = psled_machine_methods,
 };
 
+static PyMethodDef psled_core_methods[] = {
+    {
+        "step",
+        (PyCFunction)psled_core_step,
+        METH_VARARGS,
+        "Step one or more instructions"
+    },
+    { NULL }  // Sentinel
+};
+
 static PyTypeObject CoreType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "psled.core",
@@ -221,6 +246,7 @@ static PyTypeObject CoreType = {
     .tp_basicsize = sizeof(CoreObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+    .tp_methods = psled_core_methods,
 };
 
 CoreObject * psled_core_new_internal(core_t *c, uint32_t id) {
@@ -257,14 +283,6 @@ PyMODINIT_FUNC PyInit_psled(void) {
     int err;
     if ((err = add_object(m, &MachineType, "machine"))) goto add_failure_0;
     if ((err = add_object(m, &CoreType, "core"))) goto add_failure_1;
-
-    // Py_INCREF(&MachineType);
-    // if (PyModule_AddObject(m, "machine", (PyObject *)&MachineType) < 0) {
-    //     Py_DECREF(&MachineType);
-    //     Py_DECREF(m);
-    //     return NULL;
-    // }
-
     return m;
 
 add_failure_1:
