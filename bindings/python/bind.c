@@ -7,10 +7,21 @@
 #include <sled/error.h>
 #include <sled/machine.h>
 
+#define MAX_CORES 16
+
+typedef struct {
+    PyObject_HEAD
+    uint32_t id;
+    core_t *c;
+} CoreObject;
+
 typedef struct {
     PyObject_HEAD
     machine_t *m;
+    CoreObject *core[MAX_CORES];
 } MachineObject;
+
+CoreObject * psled_core_new_internal(core_t *c, uint32_t id);
 
 static PyObject *psled_machine_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     MachineObject *self;
@@ -23,6 +34,7 @@ static PyObject *psled_machine_new(PyTypeObject *type, PyObject *args, PyObject 
         Py_TYPE(self)->tp_free((PyObject *)self);
         return NULL;
     }
+    for (int i = 0; i < MAX_CORES; i++) self->core[i] = NULL;
     return (PyObject *)self;
 }
 
@@ -66,7 +78,7 @@ static PyObject *psled_machine_add_device(MachineObject *self, PyObject *args) {
 
 static PyObject *psled_machine_add_core(MachineObject *self, PyObject *args) {
     core_params_t params = {};
-    if (!PyArg_ParseTuple(args, "bbI", &params.arch, &params.subarch, &params.options, &params.arch_options)) {
+    if (!PyArg_ParseTuple(args, "bbII", &params.arch, &params.subarch, &params.options, &params.arch_options)) {
         PyErr_SetString(PyExc_TypeError, "arch, subarch, options, and arch_options arguments required");
         return NULL;
     }
@@ -106,6 +118,50 @@ static PyObject *psled_machine_load_core(MachineObject *self, PyObject *args) {
     Py_RETURN_NONE;
 }
 
+static PyObject *psled_machine_get_core(MachineObject *self, PyObject *args) {
+    uint32_t id;
+    if (!PyArg_ParseTuple(args, "I", &id)) {
+        PyErr_SetString(PyExc_TypeError, "core_id argument required");
+        return NULL;
+    }
+
+    CoreObject *c = NULL;
+    int i;
+    for (i = 0; i < MAX_CORES; i++) {
+        if (self->core[i] == NULL) break;
+        if (self->core[i]->id == id) {
+            c = self->core[i];
+            break;
+        }
+    }
+
+    if (i == MAX_CORES) {
+        PyErr_SetString(PyExc_TypeError, "core limit exceeded");
+        return NULL;
+    }
+
+    if (c == NULL) {
+        core_t *core = machine_get_core(self->m, id);
+        if (core == NULL) {
+            PyErr_SetString(PyExc_TypeError, "core not found");
+            return NULL;
+        }
+
+        c = psled_core_new_internal(core, id);
+        if (c == NULL) {
+            PyErr_SetString(PyExc_TypeError, "failed to allocate core");
+            return NULL;
+        }
+        Py_INCREF(c);
+        for (i = 0; i < MAX_CORES; i++) {
+            if (self->core[i] == NULL) {
+                self->core[i] = c;
+                break;
+            }
+        }
+    }
+    return (PyObject *)c;
+}
 
 static PyMethodDef psled_machine_methods[] = {
     {
@@ -125,6 +181,12 @@ static PyMethodDef psled_machine_methods[] = {
         (PyCFunction)psled_machine_add_core,
         METH_VARARGS,
         "Add core to machine"
+    },
+    {
+        "get_core",
+        (PyCFunction)psled_machine_get_core,
+        METH_VARARGS,
+        "Get core by id"
     },
     {
         "load_core",
@@ -147,6 +209,25 @@ static PyTypeObject MachineType = {
     .tp_methods = psled_machine_methods,
 };
 
+static PyTypeObject CoreType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "psled.core",
+    .tp_doc = PyDoc_STR("Sled Core"),
+    .tp_basicsize = sizeof(CoreObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+};
+
+CoreObject * psled_core_new_internal(core_t *c, uint32_t id) {
+    CoreObject *self;
+    self = (CoreObject *)CoreType.tp_alloc(&CoreType, 0);
+    if (self == NULL) return NULL;
+    self->id = id;
+    self->c = c;
+    return self;
+}
+
+
 static struct PyModuleDef psledmodule = {
     PyModuleDef_HEAD_INIT,
     .m_name = "psled", // name of module
@@ -154,20 +235,36 @@ static struct PyModuleDef psledmodule = {
     .m_size = -1,      // size of per-interpreter state of the module, or -1 if the module keeps state in global variables.
 };
 
-PyMODINIT_FUNC PyInit_psled(void) {
-    PyObject *m;
-    if (PyType_Ready(&MachineType) < 0)
-        return NULL;
+static int add_object(PyObject *module, PyTypeObject *obj_type, const char *name) {
+    if (PyType_Ready(obj_type) < 0) return -1;
+    Py_INCREF(obj_type);
+    if (PyModule_AddObject(module, name, (PyObject *)obj_type) < 0) {
+        Py_DECREF(obj_type);
+        return -1;
+    }
+    return 0;
+}
 
-    m = PyModule_Create(&psledmodule);
+PyMODINIT_FUNC PyInit_psled(void) {
+    PyObject *m = PyModule_Create(&psledmodule);
     if (m == NULL) return NULL;
 
-    Py_INCREF(&MachineType);
-    if (PyModule_AddObject(m, "machine", (PyObject *) &MachineType) < 0) {
-        Py_DECREF(&MachineType);
-        Py_DECREF(m);
-        return NULL;
-    }
+    int err;
+    if ((err = add_object(m, &MachineType, "machine"))) goto add_failure_0;
+    if ((err = add_object(m, &CoreType, "core"))) goto add_failure_1;
+
+    // Py_INCREF(&MachineType);
+    // if (PyModule_AddObject(m, "machine", (PyObject *)&MachineType) < 0) {
+    //     Py_DECREF(&MachineType);
+    //     Py_DECREF(m);
+    //     return NULL;
+    // }
 
     return m;
+
+add_failure_1:
+    Py_DECREF(&MachineType);
+add_failure_0:
+    Py_DECREF(m);
+    return NULL;
 }
