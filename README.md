@@ -109,12 +109,24 @@ This will build a shared object `sdk/host/<os-arch>/lib/psled.cpython-<version>.
 
     export PYTHONPATH=/path/to/sdk/host/<os-arch>/lib
 
-Then launch `python3` or include in your scripts
+Then launch `python3` or import it into your scripts in your scripts
 
-    >>> import psled
-    >>> m = psled.machine()
-    >>> m.add_mem(0x10000, (5 * 1024 * 1024))
-    >>> m.add_dev(128, 0x5000000, "uart0")
+### Example 1
+
+    import psled
+
+    def main():
+        m = psled.machine()
+        m.add_mem(0x10000, (5 * 1024 * 1024))
+        m.add_dev(128, 0x5000000, "uart0")
+        id = m.add_core(2, 0, 0, 0)
+        m.load_core(id, "sdk/target/rv32im/bin/fib")
+        c = m.get_core(id)
+        c.step(100000)
+        print("done")
+
+    if (__name__ == "__main__"):
+        main()
 
 the `dir()` command will show available functions
 
