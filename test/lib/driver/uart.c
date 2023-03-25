@@ -7,9 +7,9 @@
 
 int platform_getchar(void) {
     // todo: wait for data
-    return reg32(UART_BASE, UART_REG_FIFO_READ);
+    return reg32(PLAT_UART_BASE, UART_REG_FIFO_READ);
 }
 
 void platform_putchar(char c) {
-    reg32(UART_BASE, UART_REG_FIFO_WRITE) = c;
+    reg32(PLAT_UART_BASE, UART_REG_FIFO_WRITE) = c;
 }

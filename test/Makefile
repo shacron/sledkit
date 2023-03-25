@@ -4,7 +4,7 @@
 
 include src/build.mk
 
-COMMON_TESTS := fib towers
+COMMON_TESTS := fib mpu towers
 LIBTARGETS := driver
 
 riscv32_TESTS := rvcomp
