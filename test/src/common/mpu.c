@@ -63,9 +63,13 @@ int main(void) {
     assert(status & MPU_STATUS_ENABLED);
 
     uintptr_t buf_addr = (uintptr_t)buffer;
-    uintptr_t buf_remap = 0x87650000;
+#if __LP64__
+    unsigned long buf_remap = 0x11abcdef87650000;
+#else
+    unsigned long buf_remap = 0x87650000;
+#endif
 
-    printf("buffer is located at %p, remapping it at %#x\n", buffer, buf_remap);
+    printf("buffer is located at %p, remapping it at %#lx\n", buffer, buf_remap);
 
     mpu_add_mapping(2, buf_remap, buf_addr, BUFLEN * sizeof(uint32_t));
 
