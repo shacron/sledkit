@@ -99,7 +99,11 @@ Example:
 
 Additional parameters, such as CFLAGS, may be required depending on the target.
 
-## Building Python Bindings
+## ~~Building Python Binding~~
+
+**PYTHON BINDINGS ARE EXTREMELY OUT OF DATE**
+
+_The Python bindings have not kept up with changes in the code and are currently a low priority. They will likely be resurrected in the future, but they are currently too difficult to maintain with a rapidly changing API._
 
 A Python language extension can be built using the following command:
 
