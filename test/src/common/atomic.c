@@ -24,20 +24,38 @@ typedef struct {
     atomic_uchar uc;
     atomic_ushort us;
     atomic_uint ui;
+#if __LP64__
     atomic_ulong ul;
-    atomic_ullong ull;
+#endif
 } atest_t;
 
 int atomic_test(void) {
 #if __riscv_atomic
     printf("testing atomic instructions\n");
 
-    atest_t a = {};
+    atest_t a = {
+#if __LP64__
+        .ul = 10000000000000,
+#endif
+        .uc = 5, .us = 1000, .ui = 1000000, };
 
-    unsigned int i;
-    i = atomic_fetch_add_explicit(&a.ui, 2, memory_order_relaxed);
-    i = atomic_fetch_add_explicit(&a.ui, 1, memory_order_relaxed);
-    printf("got %u\n", i);
+    atomic_fetch_add_explicit(&a.uc, 3, memory_order_relaxed);
+    unsigned char c = atomic_fetch_add_explicit(&a.uc, 3, memory_order_relaxed);
+    printf("char %u\n", c);
+
+    atomic_fetch_add_explicit(&a.us, 3, memory_order_relaxed);
+    unsigned short s = atomic_fetch_add_explicit(&a.us, 1, memory_order_relaxed);
+    printf("short %u\n", s);
+
+    atomic_fetch_add_explicit(&a.ui, 3, memory_order_relaxed);
+    unsigned int i = atomic_fetch_add_explicit(&a.ui, 1, memory_order_relaxed);
+    printf("int %u\n", i);
+
+#if __LP64__
+    atomic_fetch_add_explicit(&a.ul, 3, memory_order_relaxed);
+    unsigned long l = atomic_fetch_add_explicit(&a.ul, 1, memory_order_relaxed);
+    printf("long %lu\n", l);
+#endif
 
 #else
     printf("atomic instructions unsupported!\n");
