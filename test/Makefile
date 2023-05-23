@@ -5,12 +5,16 @@
 include src/build.mk
 
 COMMON_TESTS := atomic fib mpu towers
+FP_TESTS := float
 LIBTARGETS := driver
 
 riscv32_TESTS := rvcomp
 
 ALL_TESTS := $(COMMON_TESTS) $($(BLD_TARGET_ARCH_FAMILY)_TESTS)
 
+ifeq ($(BLD_TARGET_FPU32),1)
+ALL_TESTS += $(FP_TESTS)
+endif
 
 ##############################################################################
 # flags

@@ -1,6 +1,7 @@
 
 atomic_CSOURCES := src/common/atomic.c
 fib_CSOURCES := src/common/fib.c
+float_CSOURCES := src/common/float.c
 mpu_CSOURCES := src/common/mpu.c
 towers_CSOURCES := src/common/towers.c
 

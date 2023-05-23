@@ -57,10 +57,23 @@ ifeq ($(BLD_TARGET_TRIPLE),)
 
 ifneq ($(findstring rv32,$(BLD_TARGET_ARCH)),)
 export BLD_TARGET_ARCH_FAMILY := riscv32
+X_TRIM_ARCH := $(subst rv32,,$(BLD_TARGET_ARCH))
 endif
 
 ifneq ($(findstring rv64,$(BLD_TARGET_ARCH)),)
 export BLD_TARGET_ARCH_FAMILY := riscv64
+X_TRIM_ARCH := $(subst rv64,,$(BLD_TARGET_ARCH))
+endif
+
+# derive whether floating point is supported
+# this probably breaks with the fancier Z extensions, but it will do for now.
+ifeq ($(findstring $(BLD_TARGET_ARCH_FAMILY),riscv32 riscv64),$(BLD_TARGET_ARCH_FAMILY))
+ifeq ($(findstring f,$(X_TRIM_ARCH)),f)
+export BLD_TARGET_FPU32 := 1
+endif
+ifeq ($(findstring f,$(X_TRIM_ARCH)),d)
+export BLD_TARGET_FPU64 := 1
+endif
 endif
 
 BLD_TARGET_TRIPLE := $(BLD_TARGET_ARCH_FAMILY)-linux-none
