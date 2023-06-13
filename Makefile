@@ -25,6 +25,7 @@ include config.mk
 TARGET_ROOT := $(SDKDIR)/target/$(BLD_TARGET_ARCH)
 export BLD_TARGET_LIBDIR := $(TARGET_ROOT)/lib
 export BLD_TARGET_BINDIR := $(TARGET_ROOT)/bin
+export BLD_TARGET_MKDIR  := $(TARGET_ROOT)/mk
 export BLD_TARGET_INCDIR := $(SDKDIR)/target/include
 
 export MAKE
@@ -57,21 +58,19 @@ ifeq ($(BLD_TARGET_TRIPLE),)
 
 ifneq ($(findstring rv32,$(BLD_TARGET_ARCH)),)
 export BLD_TARGET_ARCH_FAMILY := riscv32
-X_TRIM_ARCH := $(subst rv32,,$(BLD_TARGET_ARCH))
 endif
 
 ifneq ($(findstring rv64,$(BLD_TARGET_ARCH)),)
 export BLD_TARGET_ARCH_FAMILY := riscv64
-X_TRIM_ARCH := $(subst rv64,,$(BLD_TARGET_ARCH))
 endif
 
 # derive whether floating point is supported
-# this probably breaks with the fancier Z extensions, but it will do for now.
-ifeq ($(findstring $(BLD_TARGET_ARCH_FAMILY),riscv32 riscv64),$(BLD_TARGET_ARCH_FAMILY))
-ifeq ($(findstring f,$(X_TRIM_ARCH)),f)
+ifneq ($(findstring riscv,$(BLD_TARGET_ARCH_FAMILY)),)
+-include $(BLD_TARGET_MKDIR)/rv_generated_args.mk
+ifeq ($(BLD_TARGET_RV_EXT_F),1)
 export BLD_TARGET_FPU32 := 1
 endif
-ifeq ($(findstring f,$(X_TRIM_ARCH)),d)
+ifeq ($(BLD_TARGET_RV_EXT_D),1)
 export BLD_TARGET_FPU64 := 1
 endif
 endif
@@ -117,6 +116,11 @@ monitor: headers runtime libc
 .PHONY: tests
 tests: headers $(ALL_TARGETS)
 	@$(MAKE) -s -C $(TESTDIR) BLD_TARGET_OBJDIR=$(TARGET_OBJDIR)/$@
+
+
+$(BLD_TARGET_MKDIR)/rv_generated_args.mk:
+	@mkdir -p $(dir $@)
+	@tools/rvparse.sh $(BLD_TARGET_ARCH) > $@
 
 #####################################################################
 # python bindings build

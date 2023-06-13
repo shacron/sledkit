@@ -297,24 +297,20 @@ BUILTIN_ppc := \
 	$(BUILTINDIR)/ppc/DD.h \
 	$(BUILTINDIR)/ppc/floatditf.c \
 
-
-# only rv32
-BUILTIN_rv32i := \
-	$(BUILTINDIR)/muldi3.c \
-	$(BUILTINDIR)/riscv/mulsi3.S \
-
-BUILTIN_rv32ic := $(BUILTIN_rv32i)
-
-# only rv64
-BUILTIN_rv64i := \
-	$(BUILTINDIR)/riscv/muldi3.S \
-
-BUILTIN_rv64ic := $(BUILTIN_rv64i)
-
 # all riscv
 BUILTIN_riscv := \
 	$(BUILTINDIR)/riscv/restore.S \
 	$(BUILTINDIR)/riscv/save.S \
+
+# all rv32
+BUILTIN_riscv32 := \
+	$(BUILTINDIR)/muldi3.c \
+	$(BUILTINDIR)/riscv/mulsi3.S \
+
+# all rv64
+BUILTIN_riscv64 := \
+	$(BUILTINDIR)/riscv/muldi3.S \
+
 
 
 BUILTIN_x86 := \
