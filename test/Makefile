@@ -5,7 +5,7 @@
 include src/build.mk
 
 COMMON_TESTS := atomic fib mpu towers
-FP_TESTS := float
+FP_TESTS := float sin
 LIBTARGETS := driver
 
 riscv32_TESTS := rvcomp
