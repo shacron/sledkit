@@ -2,9 +2,27 @@
 # build tests per arch
 ##############################################################################
 
+include bringup-bench/build.mk
 include src/build.mk
 
-COMMON_TESTS := atomic fib mpu
+COMMON_TESTS := atomic fib mpu \
+	bb_ackermann \
+	bb_banner \
+	bb_boyer-moore-search \
+	bb_cipher \
+	bb_dhrystone \
+	bb_distinctness \
+	bb_flood-fill \
+	bb_hanoi \
+	bb_heapsort \
+	bb_mandelbrot \
+	bb_mersenne \
+	bb_pascal \
+	bb_shortest-path \
+	bb_sieve \
+	bb_totient \
+
+
 FP_TESTS := float sin
 LIBTARGETS := driver
 
@@ -24,7 +42,7 @@ endif
 .SECONDARY:
 
 CFLAGS := -O2 -MMD $(BLD_TARGET_CFLAGS) -I$(BLD_TARGET_INCDIR)
-INCLUDES := -I$(BLD_HOST_INCDIR)
+INCLUDES := -I$(BLD_HOST_INCDIR) -Ibringup-bench/include
 DOBJS :=
 
 

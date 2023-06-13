@@ -33,7 +33,7 @@ platform_abort:
 .data
 .align 16
 __main_stack:
-    .space 4096
+    .space 4096 * 4
 __main_stack_base:
 
 .end
