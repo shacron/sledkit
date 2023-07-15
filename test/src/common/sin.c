@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdint.h>
 #include <stdio.h>
 
 // todo: move to math.h
@@ -16,7 +17,7 @@ float test_sinf(float x) {
     float div = x;
     const float xsq = x * x;
     unsigned int fact_cur = 2;
-    unsigned long long factorial = 1;
+    uint64_t factorial = 1;
 
     for (int i = 0; i < 12; i++) {
         div = div * xsq;
@@ -29,11 +30,31 @@ float test_sinf(float x) {
     return sum;
 }
 
+double test_sind(double x) {
+    double sum = x;
+    double div = x;
+    const double xsq = x * x;
+    unsigned int fact_cur = 2;
+    uint64_t factorial = 1;
+
+    for (int i = 0; i < 12; i++) {
+        div = div * xsq;
+        factorial *= (fact_cur) * (fact_cur + 1);
+        fact_cur += 2;
+        double result = div / factorial;
+        if (i & 1) sum += result;
+        else sum -= result;
+    }
+    return sum;
+}
+
 #define ERROR_RANGE 1.0e-5
 
 int compare(float v, float expected) {
     float a = test_sinf(v);
     if ((a <= (expected + ERROR_RANGE)) && (a >= (expected - ERROR_RANGE))) return 0;
+    double b = test_sind(v);
+    if ((b <= (expected + ERROR_RANGE)) && (b >= (expected - ERROR_RANGE))) return 0;
     return -1;
 }
 
