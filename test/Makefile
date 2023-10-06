@@ -5,7 +5,7 @@
 include bringup-bench/build.mk
 include src/build.mk
 
-COMMON_TESTS := atomic fib mpu \
+COMMON_TESTS := atomic fib memset mpu \
 	bb_ackermann \
 	bb_banner \
 	bb_boyer-moore-search \
