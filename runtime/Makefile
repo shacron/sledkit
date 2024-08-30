@@ -10,11 +10,12 @@ INCLUDES := -I$(BLD_TARGET_INCDIR)
 DEFINES :=
 CFLAGS := -O2 -MMD $(BLD_TARGET_CFLAGS)
 
-RUNTIME_SOURCES := $(BUILTIN_BASE) $(BUILTIN_$(BLD_TARGET_ISA)) $(BUILTIN_$(BLD_TARGET_ARCH_FAMILY))
+# This line likely needs fixing for non-riscv targets
+RUNTIME_SOURCES := $(BUILTIN_$(BLD_TARGET_ARCH_FAMILY)_SOURCES)
 
-# ifneq ($(findstring riscv,$(BLD_TARGET_ARCH_FAMILY)),)
-# include $(BLD_TARGET_MKDIR)/rv_generated_args.mk
-# endif
+ifneq ($(findstring riscv,$(BLD_TARGET_ARCH_FAMILY)),)
+  CFLAGS += -fforce-enable-int128
+endif
 
 RUNTIME_OBJS := $(RUNTIME_SOURCES:$(SOURCEDIR)/%.c=$(BLD_TARGET_OBJDIR)/%.c.o)
 RUNTIME_OBJS := $(RUNTIME_OBJS:$(SOURCEDIR)/%.S=$(BLD_TARGET_OBJDIR)/%.S.o)
