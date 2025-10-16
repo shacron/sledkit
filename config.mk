@@ -21,7 +21,7 @@ BLD_TARGET_IMAGE_BASE ?= 0x10000
 
 # version of llvm and clang to use
 # leave blank if using a different toolchain
-BLD_LLVM_VERSION ?= 18.1.8
+BLD_LLVM_VERSION ?= 21.1.2
 
 MAKE ?= make
 
