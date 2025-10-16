@@ -136,7 +136,9 @@ the `dir()` command will show available functions
 
     >>> dir(psled)
 
-### Rebuilding Python Bindings
+### ~~Rebuilding Python Bindings~~
+
+**PYTHON BINDINGS ARE EXTREMELY OUT OF DATE**
 
 If you are making changes to sled or other components, you may need to rebuild bindings frequently. Unfortunately, Python bindings require two build options that differ from the standard options. One, they require disabling sanitizers linked into sled, unless your Python was built with the sanitizers enabled (unlikely). Two, on macOS they expect a universal (multi-architecture) build. This is why Python bindings are not built by default.
 
@@ -168,7 +170,7 @@ However, the following warning is actually an error. It indicates that the `libs
 
 ## License
 
-sledKit is Copyright (c) 2022-2023, Shac Ron and The Sled Project
+sledKit is Copyright (c) 2022-2025, Shac Ron and The Sled Project
 
 Unless otherwise stated, all code is licensed under the MIT License. The short version is that you can use this code for any purpose, but should retain the copyright notice in the source.
 
