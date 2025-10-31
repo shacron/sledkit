@@ -8,7 +8,7 @@
 int test_memset_one(uint8_t *p, uint32_t offset, uint32_t len) {
     memset(p, 0, BUFLEN);
 
-    printf("memset offset=%u, len=%u\n", offset, len);
+    // printf("memset offset=%u, len=%u\n", offset, len);
 
     void *rp = memset(p + offset, 0x5a, len);
     if (rp != p + offset) {
@@ -54,9 +54,32 @@ out:
     return err;
 }
 
+#define TBUFLEN  (64 * 1024)
+
+uint8_t buf_a[TBUFLEN];
+uint8_t buf_b[TBUFLEN];
+
+int test_throughput(void) {
+    uint8_t v = 0;
+    do {
+        memset(buf_a, v, TBUFLEN);
+        memset(buf_b, v, TBUFLEN);
+        if (memcmp(buf_a, buf_b, TBUFLEN)) {
+            printf("buffers not equal\n");
+            return -1;
+        }
+        v++;
+    } while (v != 0);
+    return 0;
+}
+
 int main(void) {
     if (test_memset()) {
         printf("memset test failed\n");
+        return 1;
+    }
+    if (test_throughput()) {
+        printf("throughput test failed\n");
         return 1;
     }
     printf("memset test ok\n");
